@@ -1,0 +1,10 @@
+x:integer;
+y:double;
+x:=5;
+y:=2.35;
+x=3+2;
+y=4+2.56;
+output<<"Hello World!";
+output<<x;
+if(x<5)
+output<<y;
