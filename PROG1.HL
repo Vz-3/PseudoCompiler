@@ -12,8 +12,3 @@ output<<x;
 
 if (x<5)
     output<<y;
-
-"fromhereonout" 
-'syntax' 
-'errors"
-"below'
