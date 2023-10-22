@@ -135,11 +135,11 @@ class LexicalAnalyzer:
                             isString = False
                         isFirstString = False
                     else:
-                        if currentType == previousType:
+                        if currentType == previousType and currentType != atomType.space:
                             combineWith = tempList.pop()
                             tempList.append(combineWith + char) 
                         else:
-                            tempList.append(char) if currentType != type.space else None
+                            tempList.append(char) if currentType != atomType.space else None
                             previousType = currentType
 
             first = True
