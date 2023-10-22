@@ -12,8 +12,7 @@ class type(Enum):
     del_left = 5
     del_right = 6
     space = 7
-    cont = 8
-    end = 9
+    end = 8
 
 class LexicalAnalyzer:
     def __init__(self, fileToTokenize) -> None:
@@ -35,8 +34,6 @@ class LexicalAnalyzer:
             return type.alpha
         elif char.isdigit() or char == ".":
             return type.numeric
-        elif char == ":":
-            return type.cont
         elif char == ";":
             return type.end
         elif char == "(":
@@ -66,10 +63,8 @@ class LexicalAnalyzer:
         # 7. Add to symbol table information about the token, such as the line number, column number, and type. We'll add the type on a different function.
         # 8. At the end of the line, append the list of tokens to the tokens list.
 
-        line_counter = 0 # Indicates the line number of the current character.
         for line in self.file.split("\n"):
             tempList = [] # Create a sub list for each line.
-            col_counter = 0 # Indicates the column number of the current character.
             for char in line:
                 if first:
                     first = False
@@ -78,7 +73,6 @@ class LexicalAnalyzer:
                         isString = True
                     # on the case of string, it only stops when it finds the same quotation mark. 
                     tempList.append(char) # if previousType != type.space else None
-                    col_counter += 1 
                 else:   
                     currentType = self.checkType(char)
 
@@ -92,24 +86,20 @@ class LexicalAnalyzer:
                         if currentType == stringType and isFirstString == False:
                             isString = False
                         isFirstString = False
-                        col_counter += 1
                     else:
                         if currentType == previousType:
                             combineWith = tempList.pop()
                             tempList.append(combineWith + char) 
-                            col_counter += 1
                         else:
                             tempList.append(char) if currentType != type.space else None
                             previousType = currentType
-                            col_counter += 1
-                
+
             first = True
             isFirstString = True
 
             # Ignore's all temp lists that are empty
             self.tokens.append(tempList) if tempList != [] else None
 
-            line_counter += 1
         print(f"Tokens:\n{self.tokens}")
 
     def tokenize(self):
