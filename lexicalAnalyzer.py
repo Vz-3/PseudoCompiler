@@ -1,4 +1,5 @@
-import re 
+import re # For regex in token type. 
+import os # For creating directory for logs.
 from enum import Enum
 
 
