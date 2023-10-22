@@ -18,20 +18,24 @@ class atomType(Enum):
     end = 8
 
 class tokenType(Enum):
-    # Order Matters. Case sensitive for keywords.
+    # Order Matters. Case sensitive for keywords. Arranged in likelihood.
     KEYWORD_IF = r"if"
     KEYWORD_OUTPUT = r"output"
     KEYWORD_INT = r"integer"
     KEYWORD_DOUBLE = r"double"
+
     IDENTIFIER = r"[a-zA-Z_][a-zA-Z0-9_]*"
+
     LITERAL_DOUBLE = r"[0-9]*\.[0-9]*" # Literals are same as constants.
     LITERAL_INTEGER = r"[0-9]*"
     LITERAL_STRING = r'''(['"])(.*?)\1''' # This could also be the alternative source of the error. 
+
+    ENDLINE = r";"
+
     OP_ASSIGNMENT = r":="
     OP_COLON = r":" # For the type declaration
     OP_EQUAL = r"=" # For the start of an operation.
-    OP_LEFTSHIFT = r"<<"
-    ENDLINE = r";"
+    OP_LEFTSHIFT = r"<<"  
     OP_ARITHMETIC_PLUS = r"\+"
     OP_ARITHMETIC_MINUS = r"-"
     OP_ARITHMETIC_MULTIPLY = r"\*"
@@ -42,6 +46,7 @@ class tokenType(Enum):
     OP_RELATIONAL_LESSTHANOREQUAL = r"<="
     OP_RELATIONAL_GREATERTHAN = r">"
     OP_RELATIONAL_GREATERTHANOREQUAL = r">="
+
     DELIMITER_LEFT_P = r"\("
     DELIMITER_RIGHT_P = r"\)"
 
@@ -61,7 +66,8 @@ class LexicalAnalyzer:
         self.initDir()
         self.atomizer()
         self.tokenizer()
-    
+        self.analyzeTokens()
+
     def initDir(self) -> None:
         """ This function will create a directory for the logs."""
         if not os.path.exists(default_directory):
@@ -149,9 +155,9 @@ class LexicalAnalyzer:
             lineCount += 1
 
         # Debugging
-        # print("\nAtoms:")
-        # for line in self.atoms:
-        #     print(line)
+        print("\nAtoms:")
+        for line in self.atoms:
+            print(line)
 
         self.writeAtoms()
 
@@ -195,9 +201,9 @@ class LexicalAnalyzer:
             lineCount += 1
         
         # Debugging
-        # print("\nTokenize:")
-        # for tup in self.tokens:
-        #     print(f"Type: {tup[1]:.32} | Token: {tup[0]}") # 32 is the longest name length of token type. Could've used a more dynamic way to get the length. QOL
+        print("\nTokenize:")
+        for tup in self.tokens:
+            print(f"Type: {tup[1]:.32} | Token: {tup[0]}") # 32 is the longest name length of token type. Could've used a more dynamic way to get the length. QOL
 
         self.writeTokens()
 
@@ -207,7 +213,28 @@ class LexicalAnalyzer:
             for tup in self.tokens:
                 file.write(f"{tup[1]:.32} token: {tup[0]} \n")
 
-    def reportError(self, targetToken, targetLine, errorMessage = None, errorType = None, mode = 'a') -> None:
+    def analyzeTokens(self) -> None:
+        """ This function initializes the symbol table and analyzes the tokens."""
+        # Base from my light understanding, symbol table is a dictionary that contains the variables and their values.
+        # Despite the fact that output is technically a function, it will not be included in the symbol table for the time being.
+        # Identifier - Data Type - Value - First Line - Last Line
+        for token in self.tokens:
+            if token[1] == tokenType.IDENTIFIER.name:
+                if token[0] not in self.symbol_table:
+                    self.symbol_table[token[0]] = {'data_type': None, 'value': 'null', 'first_line': None, 'last_line': None}
+        print("\nSymbol Table:")
+        print(self.symbol_table)
+        # Implementation (In a way, we're rebuilding the self.atoms list.)
+        # divide and conquer approach, divide the tokens into smaller groups through the use of the endline token.
+        # recursively call the function until the end of the file.
+        # Idea only works under the assumption that the syntax is correct or if no functions exist, as there can be any number of parameters and arguments that lead to higher than set threshold.
+        # threshold for recursion is 25 tokens, that's a generous amount of tokens for a single line.
+        # If token isn't registered, then add it to the symbol table with null default value and if syntax is correct, a data type, and the first line and last line are equal.
+        # Else update the token details, presumably with the value and last line. Will not handle if data type is different from type based on value.
+        # To account for lines, perhaps rely on NO_SPACES_LINE_PRESERVED.txt and the computation should decrease as the recursion goes deeper.
+        # That or we just really rely on self.atoms, combining the tokens per line.
+        
+    def reportError(self, targetToken, targetLine,  errorMessage = None, errorType = None, mode = 'a') -> None:
         """ This function will report the error of the token with its location."""
         mode = 'w' if self.isFirstError else 'a'
         self.isFirstError = False

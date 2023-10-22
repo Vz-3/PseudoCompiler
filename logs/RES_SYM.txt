@@ -44,3 +44,8 @@ KEYWORD_OUTPUT token: output
 OP_LEFTSHIFT token: << 
 IDENTIFIER token: y 
 ENDLINE token: ; 
+LITERAL_STRING token: "fromhereonout" 
+LITERAL_STRING token: 'syntax' 
+err token: 'errors" 
+err token: " 
+err token: below' 
