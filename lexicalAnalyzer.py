@@ -2,6 +2,7 @@ import re # For regex in token type.
 import os # For creating directory for logs.
 from enum import Enum
 
+# Line and Column count should always start at 0. But displayed as 1.
 
 default_directory = "logs"
 class atomType(Enum):
@@ -16,8 +17,38 @@ class atomType(Enum):
     space = 7
     end = 8
 
+class tokenType(Enum):
+    # Order Matters. Case sensitive for keywords.
+    KEYWORD_IF = r"if"
+    KEYWORD_OUTPUT = r"output"
+    KEYWORD_INT = r"integer"
+    KEYWORD_DOUBLE = r"double"
+    IDENTIFIER = r"[a-zA-Z_][a-zA-Z0-9_]*"
+    LITERAL_DOUBLE = r"[0-9]*\.[0-9]*" # Literals are same as constants.
+    LITERAL_INTEGER = r"[0-9]*"
+    LITERAL_STRING = r'''(['"])(.*?)\1''' # This could also be the alternative source of the error. 
+    OP_ASSIGNMENT = r":="
+    OP_COLON = r":" # For the type declaration
+    OP_EQUAL = r"=" # For the start of an operation.
+    OP_LEFTSHIFT = r"<<"
+    ENDLINE = r";"
+    OP_ARITHMETIC_PLUS = r"\+"
+    OP_ARITHMETIC_MINUS = r"-"
+    OP_ARITHMETIC_MULTIPLY = r"\*"
+    OP_ARITHMETIC_DIVIDE = r"/"
+    OP_RELATIONAL_ISEQUAL = r"=="
+    OP_RELATIONAL_NOTEQUAL = r"!="
+    OP_RELATIONAL_LESSTHAN = r"<"
+    OP_RELATIONAL_LESSTHANOREQUAL = r"<="
+    OP_RELATIONAL_GREATERTHAN = r">"
+    OP_RELATIONAL_GREATERTHANOREQUAL = r">="
+    DELIMITER_LEFT_P = r"\("
+    DELIMITER_RIGHT_P = r"\)"
+
 class LexicalAnalyzer:
     def __init__(self, fileToTokenize) -> None:
+        self.fileName = fileToTokenize
+
         with open(fileToTokenize, "r") as file:
             self.file = file.read()
 
