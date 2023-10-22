@@ -3,7 +3,8 @@ import os # For creating directory for logs.
 from enum import Enum
 
 
-class type(Enum):
+default_directory = "logs"
+class atomType(Enum):
     alpha = 0
     numeric = 1
     special = 2
@@ -20,39 +21,51 @@ class LexicalAnalyzer:
         with open(fileToTokenize, "r") as file:
             self.file = file.read()
 
-        self.tokens = [] # A nested list containing the tokens of each line.
+        self.atoms = [] # A nested list containing the atoms of each line.
+        self.tokens = [] # A list containing the tokens of the file in the form of a tuple (token, type).
         self.symbol_table = {} # Considered as environment
+        self.isFirstError = True # Indicates if it is the first error, useful for the error log.
 
-        self.streamLine()
+        # The following functions will be called in the constructor.
+        self.initDir()
+        self.atomizer()
+        self.tokenizer()
+    
+    def initDir(self) -> None:
+        """ This function will create a directory for the logs."""
+        if not os.path.exists(default_directory):
+            os.makedirs(default_directory)
 
-    def checkType(self, char) -> type:
+    def checkAtomType(self, char) -> atomType:
         # Rudimentary approach for type checking. Separate from the token type indentifier.
-        if char == "'":
-            return type.string_ap
+        # Produces niche error for string literals. 
+        if char == "\'": # Removing the \ doesn't produce a different effect. 
+            return atomType.string_ap
         elif char == '"':
-            return type.string_qt
+            return atomType.string_qt
         elif char.isalpha() or char == "_":
-            return type.alpha
+            return atomType.alpha
         elif char.isdigit() or char == ".":
-            return type.numeric
+            return atomType.numeric
         elif char == ";":
-            return type.end
+            return atomType.end
         elif char == "(":
-            return type.del_left
+            return atomType.del_left
         elif char == ")":
-            return type.del_right
+            return atomType.del_right
         elif char.isspace():
-            return type.space
+            return atomType.space
         else:
-            return type.special
+            return atomType.special
 
-    def streamLine(self):
+    def atomizer(self) -> None:
+        """ As the name implies, this function will break down the file into tokens, words or the atoms of the language."""
+
         first = True # Indicates if it is the first character of the line, useful for indentation.
         previousType = None # Indicates the previous type of character, for combining or separating tokens.
         isString = False # Indicates if the current character is a start of a string.
         isFirstString = True # Indicates if the current character is the first character of the string.
         stringType = None # Indicates the type of string, either single or double quotation mark.
-
 
         # Algorithm:
         # 1. Iterate through each line of the file.
@@ -61,23 +74,26 @@ class LexicalAnalyzer:
         # 4. If the character is a string, then combine the characters until it finds the same quotation mark.
         # 5. If the character is not a string, then combine the characters until it finds a different type of character.
         # 6. If the character is a space, then ignore it.
-        # 7. Add to symbol table information about the token, such as the line number, column number, and type. We'll add the type on a different function.
-        # 8. At the end of the line, append the list of tokens to the tokens list.
+        # 7. At the end of the line, append the list of tokens to the tokens list.
+        # 8. Write into NOSPACES.txt
 
+        lineCount = 0
         for line in self.file.split("\n"):
             tempList = [] # Create a sub list for each line.
             for char in line:
                 if first:
                     first = False
-                    previousType = self.checkType(char)
-                    if (previousType == type.string_ap or previousType == type.string_qt) and not isString:
+                    previousType = self.checkAtomType(char)
+                    if (previousType == atomType.string_ap or previousType == atomType.string_qt) and not isString:
                         isString = True
+                        stringType = previousType
+                        isFirstString = False # This for the next iterations, to accept any character instead of separating it.
                     # on the case of string, it only stops when it finds the same quotation mark. 
-                    tempList.append(char) # if previousType != type.space else None
+                    tempList.append(char) if previousType != atomType.space else None
                 else:   
-                    currentType = self.checkType(char)
+                    currentType = self.checkAtomType(char)
 
-                    if (currentType == type.string_ap or currentType == type.string_qt) and not isString:
+                    if (currentType == atomType.string_ap or currentType == atomType.string_qt) and not isString:
                         isString = True
                         stringType = currentType
 
