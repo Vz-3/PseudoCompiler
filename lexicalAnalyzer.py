@@ -144,13 +144,80 @@ class LexicalAnalyzer:
 
             first = True
             isFirstString = True
+            stringType = None
+            self.atoms.append(tempList) #if tempList != [] else None # Ignoring the list would result in line inconsistency.
+            lineCount += 1
 
-            # Ignore's all temp lists that are empty
-            self.tokens.append(tempList) if tempList != [] else None
+        # Debugging
+        # print("\nAtoms:")
+        # for line in self.atoms:
+        #     print(line)
 
-        print(f"Tokens:\n{self.tokens}")
+        self.writeAtoms()
 
-    def tokenize(self):
-        pass
+    def writeAtoms(self, mode = "w") -> None:
+        """ This function will write the atoms into a file."""
+        with open(f'{default_directory}/NOSPACES.txt', mode) as file:
+            for line in self.atoms:
+                for atom in line:
+                    file.write(atom)
+        
+        with open(f'{default_directory}/NOSPACES_LINE.txt', mode) as file:
+            for line in self.atoms:
+                if line != []:
+                    for atom in line:
+                        file.write(atom)
+                    file.write("\n")
+
+    def tokenizer(self) -> None:
+        """ This function will analyze the tokens and determine the type of each token."""
+            
+        # Algorithm:
+        # 1. Iterate through each line of the file.
+        # 2. Iterate through each token of the line.
+        # 3. Check the type of the token.
+        # 4. If error, print and write the error. Set the token type to 'err'.
+        # 5. At the end of the line, append the list of tokens to the tokens list.
+        # 6. Write into RES_SYM.txt
+
+        lineCount = 0
+        for line in self.atoms:
+            for token in line:
+                isToken = False
+                for ttype in tokenType:
+                    if re.fullmatch(ttype.value, token):
+                        self.tokens.append((token, ttype.name))
+                        isToken = True
+                        break
+                if not isToken:
+                    self.reportError(token, lineCount, "Invalid Token Type.", "Lexical Error")
+                    self.tokens.append((token, 'err'))
+            lineCount += 1
+        
+        # Debugging
+        # print("\nTokenize:")
+        # for tup in self.tokens:
+        #     print(f"Type: {tup[1]:.32} | Token: {tup[0]}") # 32 is the longest name length of token type. Could've used a more dynamic way to get the length. QOL
+
+        self.writeTokens()
+
+    def writeTokens(self, mode = 'w') -> None:
+        """ This function will write the tokens into a file."""
+        with open(f'{default_directory}/RES_SYM.txt', mode) as file:
+            for tup in self.tokens:
+                file.write(f"{tup[1]:.32} token: {tup[0]} \n")
+
+    def reportError(self, targetToken, targetLine, errorMessage = None, errorType = None, mode = 'a') -> None:
+        """ This function will report the error of the token with its location."""
+        mode = 'w' if self.isFirstError else 'a'
+        self.isFirstError = False
+        with open(f'{default_directory}/error.txt', mode) as log:
+            for count, line in enumerate(self.file.split("\n")):
+                if targetLine == count:
+                    targetColumn = line.find(targetToken) + 1  # Adding 1 to make it 1-indexed
+                    # Has issue since it continues to append instead of overwriting 
+                    log.write(f"\nIn {self.fileName}, line {targetLine+1}: {line}, column {targetColumn}.\n\t< {targetToken} >: {errorType} - {errorMessage}")
+                    print(f"\nIn {self.fileName}, line {targetLine+1}: {line}, column {targetColumn}.\n\t< {targetToken} >: {errorType} - {errorMessage}")
+                    break
     # Once the entire file has been tokenized, then we analyze and report errors. 
     
