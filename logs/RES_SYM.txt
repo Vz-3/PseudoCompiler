@@ -52,8 +52,5 @@ ENDLINE token: ;
 LITERAL_STRING token: "fromhereonout" 
 LITERAL_STRING token: 'syntax' 
 err token: 'errors" 
-err token: 'errors" 
 err token: " 
-err token: " 
-err token: below' 
 err token: below' 

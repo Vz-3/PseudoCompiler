@@ -296,7 +296,8 @@ class LexicalAnalyzer:
                 if not isToken:
                     self.reportError(token, lineCount, "Invalid Token Type.", "Lexical Error")
                     self.tokens.append((token, 'err'))
-                self.tokens.append((token, typeToken))
+                else:
+                    self.tokens.append((token, typeToken))
             lineCount += 1
         
         # Debugging
