@@ -303,7 +303,7 @@ class LexicalAnalyzer:
         # Debugging
         print("\nTokenize:")
         for tup in self.tokens:
-            print(f"Type: {tup[1]:.32} | Token: {tup[0]}") # 32 is the longest name length of token type. Could've used a more dynamic way to get the length. QOL
+            print(f"Type: {tup[1]:<32} | Token: {tup[0]}") # 32 is the longest name length of token type. Could've used a more dynamic way to get the length. QOL
 
         self.writeTokens()
 
