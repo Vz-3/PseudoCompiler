@@ -248,7 +248,7 @@ class LexicalAnalyzer:
     def checkTokenType(self, token, typeScope: Enum) -> (bool, str): 
         """ This function will check the type of the token, returns the specified type if it matches, else returns typeScope"""
         isToken = False
-        print("Typescope:", typeScope, "Token:", token, end = "\t\t")
+        # print("Typescope:", typeScope, "Token:", token, end = "\t\t")
         
         nextScope = None
 
@@ -259,8 +259,9 @@ class LexicalAnalyzer:
                 break
         if not isToken:
             # If it reaches this point, this means that there's a regex in the higher scope that matches the token but not the lower scope.
-            return (False, None)
-        print("Found match:", nextScope, "with type ", type(nextScope), end = "\t\t")
+            # Managed to reach this with 'errors" or "below'
+            return (False, 'err')
+        # print("Found match:", nextScope, "with type ", type(nextScope), end = "\t\t")
         
         # Recurse if next scope is in the enum dictionary.
         for name, enum in enumDictionary.items():
@@ -272,7 +273,7 @@ class LexicalAnalyzer:
                 return result
 
         # Should always be a str data type at this point.
-        print("Returns with type:", nextScope, " of type ", type(nextScope), end="\n\n")
+        # print("Returns with type:", nextScope, " of type ", type(nextScope), end="\n\n")
         return (True, nextScope)
 
         
@@ -316,12 +317,7 @@ class LexicalAnalyzer:
         # Base from my light understanding, symbol table is a dictionary that contains the variables and their values.
         # Despite the fact that output is technically a function, it will not be included in the symbol table for the time being.
         # Identifier - Data Type - Value - First Line - Last Line
-        for token in self.tokens:
-            if token[1] == tokenType.IDENTIFIER.name:
-                if token[0] not in self.symbol_table:
-                    self.symbol_table[token[0]] = {'data_type': None, 'value': 'null', 'first_line': None, 'last_line': None}
-        print("\nSymbol Table:")
-        print(self.symbol_table)
+
         # Implementation (In a way, we're rebuilding the self.atoms list.)
         # divide and conquer approach, divide the tokens into smaller groups through the use of the endline token.
         # recursively call the function until the end of the file.
@@ -330,8 +326,50 @@ class LexicalAnalyzer:
         # If token isn't registered, then add it to the symbol table with null default value and if syntax is correct, a data type, and the first line and last line are equal.
         # Else update the token details, presumably with the value and last line. Will not handle if data type is different from type based on value.
         # To account for lines, perhaps rely on NO_SPACES_LINE_PRESERVED.txt and the computation should decrease as the recursion goes deeper.
-        # That or we just really rely on self.atoms, combining the tokens per line.
+        # That or we just really rely on self.atoms, combining the tokens per line. Cheaper and faster option I think.
+        # dont rely on endline.
+        # Just quickly grab all the identifiers to initialize the symbol table. 
+        for token in self.tokens:
+            if token[1] == tokenType.IDENTIFIER.name:
+                if token[0] not in self.symbol_table:
+                    self.symbol_table[token[0]] = {'data_type': None, 'value': 'null', 'first_line': None, 'last_line': None}
+
+        print("\nSymbol Table:")
+        print(self.symbol_table, end="\n\n")
+        # Then we proceed by looking up all the combined atoms and check if they have an identifier or not. 
         
+        # self.updateTokenCopy()
+        # analyzeList = []
+        # for lineCount, atom in enumerate(self.atoms):
+        #     for key in self.symbol_table:
+        #         # Limited to only assignment and declaration. Rest is up to syntax and evaluation. 
+        #         if key in atom and (tokenType.OP_ASSIGNMENT.value in atom or tokenType.OP_COLON.value in atom):
+        #             parsedAtom = ''.join(atom)
+        #             isAssign = 1 if tokenType.OP_ASSIGNMENT.value in atom else 0 # Cause it's guaranteeed that its a colon.
+        #             #print("Key:", key, "Parsed Atom:", parsedAtom, "Line:", lineCount, isAssign) 
+        #             # Remove what we know, ergo the identifier, assignment/colon, and the endline tokens, leaving only the likehood of data type or literal.
+        #             cleanedAtom = parsedAtom.replace(key, "").replace(tokenType.OP_ASSIGNMENT.value, "").replace(tokenType.OP_COLON.value, "").replace(tokenType.ENDLINE.value, "")
+        #             analyzeList.append((key,cleanedAtom, lineCount, isAssign)) # key, line, lineCount, mode tuple. lineCount still starts at 0 to confer to error reporting.
+        
+        # print("\nAnalyze List:", analyzeList)
+        # self.foo(analyzeList)
+
+    def foo(self, l) -> None:
+        token, line, lineCount, mode = l.pop(0)
+
+        print("hm", token, line, lineCount, mode, end = " - " )
+        val = self.symbol_table[token]['value'] 
+        dt = self.symbol_table[token]['data_type']
+        print("val", val, "dt", dt)
+        if mode == 1: # Assignment
+            if dt == None:
+                self.reportError(line, lineCount, f"Undeclared Variable {token}.", "Lexical Error")
+            
+            
+        #self.tokenize(DATA_TYPE,token, lineCount) if val == 'null' else self.reportError(key, lineCount, f"Redeclaration Error, Previously declared at {self.symbol_table[key]['first_line']}.", "Lexical Error")
+        self.foo(l) if l != [] else None
+        #self.reportError(key, line, f"Redeclaration Error.", "Lexical Error")      
+
     def reportError(self, targetToken, targetLine,  errorMessage = None, errorType = None, mode = 'a') -> None:
         """ This function will report the error of the token with its location."""
         mode = 'w' if self.isFirstError else 'a'

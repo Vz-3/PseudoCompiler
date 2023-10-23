@@ -14,6 +14,11 @@ IDENTIFIER token: y
 OP_ASSIGNMENT token: := 
 LITERAL_DOUBLE token: 2.35 
 ENDLINE token: ; 
+IDENTIFIER token: z 
+OP_ASSIGNMENT token: := 
+OP_ARITHMETIC_MINUS token: - 
+LITERAL_DOUBLE token: 99.2 
+ENDLINE token: ; 
 IDENTIFIER token: x 
 OP_EQUAL token: = 
 LITERAL_INTEGER token: 3 
@@ -22,7 +27,7 @@ LITERAL_INTEGER token: 2
 ENDLINE token: ; 
 IDENTIFIER token: y 
 OP_EQUAL token: = 
-LITERAL_INTEGER token: 4 
+IDENTIFIER token: z 
 OP_ARITHMETIC_PLUS token: + 
 LITERAL_DOUBLE token: 2.56 
 ENDLINE token: ; 
@@ -47,5 +52,8 @@ ENDLINE token: ;
 LITERAL_STRING token: "fromhereonout" 
 LITERAL_STRING token: 'syntax' 
 err token: 'errors" 
+err token: 'errors" 
 err token: " 
+err token: " 
+err token: below' 
 err token: below' 

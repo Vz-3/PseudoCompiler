@@ -1,7 +1,7 @@
 
-In src.txt, line 18: 'errors", column 1.
+In src.txt, line 20: 'errors", column 1.
 	< 'errors" >: Lexical Error - Invalid Token Type.
-In src.txt, line 19: "below', column 1.
+In src.txt, line 21: "below', column 1.
 	< " >: Lexical Error - Invalid Token Type.
-In src.txt, line 19: "below', column 2.
+In src.txt, line 21: "below', column 2.
 	< below' >: Lexical Error - Invalid Token Type.
