@@ -15,7 +15,8 @@ class atomType(Enum):
     del_left = 5
     del_right = 6
     space = 7
-    end = 8
+    arithemetic = 8
+    end = 9
 
 class tokenType(Enum):
     # Order Matters. Case sensitive for keywords. Arranged in likelihood.
@@ -92,6 +93,8 @@ class LexicalAnalyzer:
             return atomType.del_right
         elif char.isspace():
             return atomType.space
+        elif char == "+" or char == "-" or char == "*" or char == "/":
+            return atomType.arithemetic
         else:
             return atomType.special
 
