@@ -13,3 +13,7 @@ In src.txt, line 21: x:bubbly;, column 1.
 |	x :: Lexical Error :: Redeclaration Error of x previously in line: 1
 In src.txt, line 21: x:bubbly;, column 1.
 |	x :: Lexical Error :: Invalid Token Type of type DATA_TYPE.
+In src.txt, line 7: z:=-99.2;, column 1.
+|	z :: Lexical Error :: Incorrect token: z.
+In src.txt, line 21: x:bubbly;, column 3.
+|	bubbly :: Lexical Error :: Incorrect token: bubbly.

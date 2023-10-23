@@ -116,6 +116,7 @@ class LexicalAnalyzer:
         self.atomizer()
         self.tokenizer()
         self.analyzeTokens()
+        self.cleanTable() # At this point, all the variables should have a data type and value. Otherwise, they are not an indentifier, or declared/assigned properly.
 
     def getEnumValue(self, enumScope:Enum, target:str, isName:bool = False) -> str:
         """ This function will return the value of the enum."""
@@ -347,21 +348,29 @@ class LexicalAnalyzer:
                     cleanedAtom = parsedAtom.replace(key, "").replace(OPERATOR.OP_ASSIGNMENT.value, "").replace(OPERATOR.OP_COLON.value, "").replace(tokenType.ENDLINE.value, "")
                     # That's why if the declaration or assignment is wrong syntactically, it will not be added to the symbol table and flag the error.
                     analyzeList.append((key, cleanedAtom, lineCount, isAssign)) # key, line, lineCount, mode tuple. lineCount still starts at 0 to confer to error reporting.
-        
-        print("\nAnalyze List:", analyzeList)
-
+    
+        # print("Analyze List:", analyzeList)
         # Recursion
-        self.foo(analyzeList)
+        self.assignOrDeclare(analyzeList)
 
-        print("\nSymbol Table:")
-        print(self.symbol_table, end="\n\n")
-
-        self.cleanTable() # At this point, all the variables should have a data type and value. Otherwise, they are not an indentifier, or declared/assigned properly.
+    def fixTokens(self, targetToken: any, targetLine: int) -> None:
+        """ This function will fix the tokens by removing the target token and the token before it."""
+        # print("Target Token:", targetToken, "Target Line:", targetLine)
+        for ctr, val in enumerate(self.tokensCopy):
+            if val[0] == targetToken and val[1] == tokenType.IDENTIFIER.name:
+                # print("Replacing :", self.tokens[ctr], "AT LINE:", targetLine, "VAL:", val)
+                self.tokens[ctr] = (self.tokens[ctr][0], 'err')
 
     def cleanTable(self) -> None:
-        pass
+        rejects = {k: v for k, v in self.symbol_table.items() if v['data_type'] is None or v['value'] == 'null'}
+        for key in rejects: 
+            self.fixTokens(key, rejects[key]['first_line'])
+            self.reportError(key, rejects[key]['first_line']-1, f"Incorrect token: {key}.", "Lexical Error")
+        self.symbol_table = {k: v for k, v in self.symbol_table.items() if v['data_type'] is not None and v['value'] != 'null'}
+        print("\nNew Symbol Table:")
+        print(self.symbol_table, end="\n\n")
 
-    def foo(self, l) -> None:
+    def assignOrDeclare(self, l) -> None:
         token, tag, lineCount, mode = l.pop(0)
 
         val = self.symbol_table[token]['value']
@@ -389,7 +398,7 @@ class LexicalAnalyzer:
                     self.symbol_table[token]['value'] = tag if dt == DATA_TYPE.KEYWORD_DOUBLE.value else re.sub(r'\..+', '',tag)
                     self.symbol_table[token]['last_line'] = lineCount+1
 
-        self.foo(l) if l != [] else None   
+        self.assignOrDeclare(l) if l != [] else None   
 
     def reportError(self, targetToken: any, targetLine: int,  errorMessage = None, errorType = None, mode = 'a') -> None:
         """ This function will report the error of the token with its location."""
