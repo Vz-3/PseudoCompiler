@@ -1,7 +1,15 @@
 
-In src.txt, line 20: 'errors", column 1.
+In src.txt, line 24: 'errors", column 1.
 |	'errors" :: Lexical Error :: Invalid Token Type.
-In src.txt, line 21: "below', column 1.
+In src.txt, line 25: "below', column 1.
 |	" :: Lexical Error :: Invalid Token Type.
-In src.txt, line 21: "below', column 2.
+In src.txt, line 25: "below', column 2.
 |	below' :: Lexical Error :: Invalid Token Type.
+In src.txt, line 7: z:=-99.2;, column 4.
+|	-99.2 :: Lexical Error :: Undeclared Variable z.
+In src.txt, line 20: x:double;, column 1.
+|	x :: Lexical Error :: Redeclaration Error of x previously in line: 1
+In src.txt, line 21: x:bubbly;, column 1.
+|	x :: Lexical Error :: Redeclaration Error of x previously in line: 1
+In src.txt, line 21: x:bubbly;, column 1.
+|	x :: Lexical Error :: Invalid Token Type of type DATA_TYPE.

@@ -57,8 +57,8 @@ class OPERATOR(Enum):
 
 # BASE
 class LITERAL(Enum):
-    LITERAL_DOUBLE = r"[0-9]*\.[0-9]*" # Literals are same as constants.
-    LITERAL_INTEGER = r"[0-9]*"
+    LITERAL_DOUBLE = r"-?[0-9]+\.[0-9]*" # Literals are same as constants.
+    LITERAL_INTEGER = r"-?[0-9]+"
     LITERAL_STRING = r'''(['"])(.*?)\1''' # This could also be the alternative source of the error. 
 
 # EXTENDED 
@@ -116,6 +116,14 @@ class LexicalAnalyzer:
         self.atomizer()
         self.tokenizer()
         self.analyzeTokens()
+
+    def getEnumValue(self, enumScope:Enum, target:str, isName:bool = False) -> str:
+        """ This function will return the value of the enum."""
+        for scope in enumScope:
+            # print("Scope: ", scope.value, "Target: ", target)
+            if re.fullmatch(scope.value, target):
+                return scope.value if not isName else scope.name
+        return None
 
     def updateTokenCopy(self) -> None:
         """ This function will update the token copy. Useful for symbol table initialization and perhaps other uses."""
@@ -210,9 +218,9 @@ class LexicalAnalyzer:
             lineCount += 1
 
         # Debugging
-        print("\nAtoms:")
-        for line in self.atoms:
-            print(line)
+        # print("\nAtoms:")
+        # for line in self.atoms:
+        #     print(line)
 
         self.writeAtoms()
 
@@ -229,20 +237,15 @@ class LexicalAnalyzer:
                     for atom in line:
                         file.write(atom)
                     file.write("\n")
-    def tokenize(self, typeScope, token, lineCount) -> tokenType:
+    
+    # Must pass only a base or extended enum, otherwise it will not work as there's no recursion for general enums.
+    def tokenize(self, typeScope: Enum, token: str, lineCount: int) -> str:
         """ Smaller version of tokenizer, used for individual token matching!"""
-        print("GOT CALLED HOW BOUT THAT")
-        isToken = False
-        for ttype in typeScope:
-            print("Typescope:", ttype.value, "Token:", token)
-            if re.fullmatch(ttype.value, token):
-                isToken = True
-                print("Found match:", ttype.name, "Token:", token)
-                break
-        print()
-        if not isToken:
-                print("Error on line", lineCount+1, "Token:", token)
-                self.reportError(token, lineCount, "Invalid Data Type.", "Lexical Error")
+        result = self.getEnumValue(typeScope, token)
+        if result != None: # Guard is better than if else.
+            return result
+        self.reportError(token, lineCount, f"Invalid Token Type of type {typeScope.__name__}.", "Lexical Error")
+        return False
 
     # For tokenizer only. 
     def checkTokenType(self, token, typeScope: Enum) -> (bool, str): 
@@ -276,8 +279,6 @@ class LexicalAnalyzer:
         # print("Returns with type:", nextScope, " of type ", type(nextScope), end="\n\n")
         return (True, nextScope)
 
-        
-
     def tokenizer(self) -> None:
         """ This function will analyze the tokens and determine the type of each token."""
             
@@ -299,9 +300,9 @@ class LexicalAnalyzer:
             lineCount += 1
         
         # Debugging
-        print("\nTokenize:")
-        for tup in self.tokens:
-            print(f"Type: {tup[1]:<32} | Token: {tup[0]}") # 32 is the longest name length of token type. Could've used a more dynamic way to get the length. QOL
+        # print("\nTokenize:")
+        # for tup in self.tokens:
+        #     print(f"Type: {tup[1]:<32} | Token: {tup[0]}") # 32 is the longest name length of token type. Could've used a more dynamic way to get the length. QOL
 
         self.writeTokens()
 
@@ -309,25 +310,20 @@ class LexicalAnalyzer:
         """ This function will write the tokens into a file."""
         with open(f'{default_directory}/RES_SYM.txt', mode) as file:
             for tup in self.tokens:
-                file.write(f"{tup[1]:.32} token: {tup[0]} \n")
+                file.write(f"{tup[1]:<32} token: {tup[0]} \n")
 
     def analyzeTokens(self) -> None:
         """ This function initializes the symbol table and analyzes the tokens."""
         # Base from my light understanding, symbol table is a dictionary that contains the variables and their values.
         # Despite the fact that output is technically a function, it will not be included in the symbol table for the time being.
         # Identifier - Data Type - Value - First Line - Last Line
-
+        
         # Implementation (In a way, we're rebuilding the self.atoms list.)
-        # divide and conquer approach, divide the tokens into smaller groups through the use of the endline token.
-        # recursively call the function until the end of the file.
-        # Idea only works under the assumption that the syntax is correct or if no functions exist, as there can be any number of parameters and arguments that lead to higher than set threshold.
-        # threshold for recursion is 25 tokens, that's a generous amount of tokens for a single line.
-        # If token isn't registered, then add it to the symbol table with null default value and if syntax is correct, a data type, and the first line and last line are equal.
-        # Else update the token details, presumably with the value and last line. Will not handle if data type is different from type based on value.
-        # To account for lines, perhaps rely on NO_SPACES_LINE_PRESERVED.txt and the computation should decrease as the recursion goes deeper.
-        # That or we just really rely on self.atoms, combining the tokens per line. Cheaper and faster option I think.
-        # dont rely on endline.
-        # Just quickly grab all the identifiers to initialize the symbol table. 
+        # Initialize the symbol table with the identifiers and their default values.
+        # Heuristic approach, select only the lines containing the identifiers in a list.
+        # Recursively check the list for the data type and value, update accordingly.
+
+        # Initialization
         for token in self.tokens:
             if token[1] == tokenType.IDENTIFIER.name:
                 if token[0] not in self.symbol_table:
@@ -335,41 +331,67 @@ class LexicalAnalyzer:
 
         print("\nSymbol Table:")
         print(self.symbol_table, end="\n\n")
-        # Then we proceed by looking up all the combined atoms and check if they have an identifier or not. 
+        #Then we proceed by looking up all the combined atoms and check if they have an identifier or not. 
         
-        # self.updateTokenCopy()
-        # analyzeList = []
-        # for lineCount, atom in enumerate(self.atoms):
-        #     for key in self.symbol_table:
-        #         # Limited to only assignment and declaration. Rest is up to syntax and evaluation. 
-        #         if key in atom and (tokenType.OP_ASSIGNMENT.value in atom or tokenType.OP_COLON.value in atom):
-        #             parsedAtom = ''.join(atom)
-        #             isAssign = 1 if tokenType.OP_ASSIGNMENT.value in atom else 0 # Cause it's guaranteeed that its a colon.
-        #             #print("Key:", key, "Parsed Atom:", parsedAtom, "Line:", lineCount, isAssign) 
-        #             # Remove what we know, ergo the identifier, assignment/colon, and the endline tokens, leaving only the likehood of data type or literal.
-        #             cleanedAtom = parsedAtom.replace(key, "").replace(tokenType.OP_ASSIGNMENT.value, "").replace(tokenType.OP_COLON.value, "").replace(tokenType.ENDLINE.value, "")
-        #             analyzeList.append((key,cleanedAtom, lineCount, isAssign)) # key, line, lineCount, mode tuple. lineCount still starts at 0 to confer to error reporting.
+        # Heuristic
+        self.updateTokenCopy()
+        analyzeList = []
+        for lineCount, atom in enumerate(self.atoms):
+            for key in self.symbol_table:
+                # Limited to only assignment and declaration. Rest is up to syntax and evaluation. 
+                if key in atom and (OPERATOR.OP_ASSIGNMENT.value in atom or OPERATOR.OP_COLON.value in atom):
+                    parsedAtom = ''.join(atom)
+                    isAssign = OPERATOR.OP_ASSIGNMENT.value in atom  # Cause it's guaranteeed that its a colon.
+                    #print("Key:", key, "Parsed Atom:", parsedAtom, "Line:", lineCount, isAssign) 
+                    # Remove what we know, ergo the identifier, assignment/colon, and the endline tokens, leaving only the likehood of data type or literal.
+                    cleanedAtom = parsedAtom.replace(key, "").replace(OPERATOR.OP_ASSIGNMENT.value, "").replace(OPERATOR.OP_COLON.value, "").replace(tokenType.ENDLINE.value, "")
+                    # That's why if the declaration or assignment is wrong syntactically, it will not be added to the symbol table and flag the error.
+                    analyzeList.append((key, cleanedAtom, lineCount, isAssign)) # key, line, lineCount, mode tuple. lineCount still starts at 0 to confer to error reporting.
         
-        # print("\nAnalyze List:", analyzeList)
-        # self.foo(analyzeList)
+        print("\nAnalyze List:", analyzeList)
+
+        # Recursion
+        self.foo(analyzeList)
+
+        print("\nSymbol Table:")
+        print(self.symbol_table, end="\n\n")
+
+        self.cleanTable() # At this point, all the variables should have a data type and value. Otherwise, they are not an indentifier, or declared/assigned properly.
+
+    def cleanTable(self) -> None:
+        pass
 
     def foo(self, l) -> None:
-        token, line, lineCount, mode = l.pop(0)
+        token, tag, lineCount, mode = l.pop(0)
 
-        print("hm", token, line, lineCount, mode, end = " - " )
-        val = self.symbol_table[token]['value'] 
-        dt = self.symbol_table[token]['data_type']
-        print("val", val, "dt", dt)
-        if mode == 1: # Assignment
+        val = self.symbol_table[token]['value']
+        dt = self.symbol_table[token]['data_type']       
+        if mode == False: # Declaration
             if dt == None:
-                self.reportError(line, lineCount, f"Undeclared Variable {token}.", "Lexical Error")
+                self.symbol_table[token]['data_type'] = self.tokenize(DATA_TYPE, tag, lineCount)
+                self.symbol_table[token]['first_line'] = lineCount+1
+                self.symbol_table[token]['last_line'] = lineCount+1 # +1 since we're displaying this in symbol table.
+            else:
+                self.reportError(token, lineCount, f"Redeclaration Error of {token} previously in line: {self.symbol_table[token]['first_line']}", "Lexical Error")
+        else: # Assignment
+            if dt == None:
+                self.reportError(tag, lineCount, f"Undeclared Variable {token}.", "Lexical Error")
             
-            
-        #self.tokenize(DATA_TYPE,token, lineCount) if val == 'null' else self.reportError(key, lineCount, f"Redeclaration Error, Previously declared at {self.symbol_table[key]['first_line']}.", "Lexical Error")
-        self.foo(l) if l != [] else None
-        #self.reportError(key, line, f"Redeclaration Error.", "Lexical Error")      
+            if val == 'null':
+                result = self.tokenize(LITERAL, tag, lineCount)
+                if result != False:
+                    self.symbol_table[token]['value'] = tag if dt == DATA_TYPE.KEYWORD_DOUBLE.value else re.sub(r'\..+', '',tag)
+                    self.symbol_table[token]['first_line'] = lineCount+1 if self.symbol_table[token]['first_line'] == None else self.symbol_table[token]['first_line'] # Dont change if it exists.
+                    self.symbol_table[token]['last_line'] = lineCount+1
+            else:
+                result = self.tokenize(LITERAL, tag, lineCount)
+                if result != False:
+                    self.symbol_table[token]['value'] = tag if dt == DATA_TYPE.KEYWORD_DOUBLE.value else re.sub(r'\..+', '',tag)
+                    self.symbol_table[token]['last_line'] = lineCount+1
 
-    def reportError(self, targetToken, targetLine,  errorMessage = None, errorType = None, mode = 'a') -> None:
+        self.foo(l) if l != [] else None   
+
+    def reportError(self, targetToken: any, targetLine: int,  errorMessage = None, errorType = None, mode = 'a') -> None:
         """ This function will report the error of the token with its location."""
         mode = 'w' if self.isFirstError else 'a'
         self.isFirstError = False
