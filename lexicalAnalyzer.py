@@ -378,8 +378,8 @@ class LexicalAnalyzer:
                 if targetLine == count:
                     targetColumn = line.find(targetToken) + 1  # Adding 1 to make it 1-indexed
                     # Has issue since it continues to append instead of overwriting 
-                    log.write(f"\nIn {self.fileName}, line {targetLine+1}: {line}, column {targetColumn}.\n\t< {targetToken} >: {errorType} - {errorMessage}")
-                    print(f"\nIn {self.fileName}, line {targetLine+1}: {line}, column {targetColumn}.\n\t< {targetToken} >: {errorType} - {errorMessage}")
+                    log.write(f"\nIn {self.fileName}, line {targetLine+1}: {line}, column {targetColumn}.\n|\t{targetToken} :: {errorType} :: {errorMessage}")
+                    print(f"\nIn {self.fileName}, line {targetLine+1}: {line}, column {targetColumn}.\n|\t{targetToken} :: {errorType} :: {errorMessage}")
                     break
     # Once the entire file has been tokenized, then we analyze and report errors. 
     
