@@ -1,5 +1,5 @@
 import lexicalAnalyzer as lex
-from syntaxAnalyzer import SyntaxAnalyzer
+#from syntaxAnalyzer import SyntaxAnalyzer
 
 if __name__ == "__main__":
     lex = lex.LexicalAnalyzer("src.txt")

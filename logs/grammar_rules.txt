@@ -12,3 +12,4 @@
 <simple_expression>     -> <term> | <simple_expression> OP_ARITHMETIC_PLUS <term> | <simple_expression> OP_ARITHMETIC_MINUS <term>
 <term>                  -> <factor> | <term> OP_ARITHMETIC_MULTIPLY <factor> | <term> OP_ARITHMETIC_DIVIDE <factor>
 <factor>                -> IDENTIFIER | LITERAL_INTEGER | LITERAL_DOUBLE | ( <expression> );
+<condition>             -> <expression> OP_RELATIONAL_GREATERTHANOREQUAL <expression>
