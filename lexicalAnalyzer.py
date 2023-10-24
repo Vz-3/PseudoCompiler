@@ -252,7 +252,7 @@ class LexicalAnalyzer:
     def checkTokenType(self, token, typeScope: Enum) -> (bool, str): 
         """ This function will check the type of the token, returns the specified type if it matches, else returns typeScope"""
         isToken = False
-        # print("Typescope:", typeScope, "Token:", token, end = "\t\t")
+        #print("Typescope:", typeScope, "Token:", token, end = "\t\t")
         
         nextScope = None
 
@@ -414,3 +414,6 @@ class LexicalAnalyzer:
                     break
     # Once the entire file has been tokenized, then we analyze and report errors. 
     
+
+    def getTokens(self) -> list:
+        return self.tokens
