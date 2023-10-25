@@ -1,5 +1,7 @@
 x:integer;
 y:double;
+_aB_:integer;
+_aB_:=2;
 x:=5;
 y:=2;
 y:=-3.4;

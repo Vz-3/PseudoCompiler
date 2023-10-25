@@ -77,7 +77,7 @@ class tokenType(Enum):
     # Order Matters. Case sensitive for keywords. Arranged in likelihood.
     KEYWORD = '|'.join([keyword.value for keyword in KEYWORD])
 
-    IDENTIFIER = r"[a-zA-Z_][a-zA-Z0-9_]*"
+    IDENTIFIER = r"[a-zA-Z_][a-zA-Z_]*"
 
     LITERAL = '|'.join([literal.value for literal in LITERAL])
 

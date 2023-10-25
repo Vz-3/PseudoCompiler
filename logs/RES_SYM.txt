@@ -6,6 +6,14 @@ IDENTIFIER                       token: y
 OP_COLON                         token: : 
 KEYWORD_DOUBLE                   token: double 
 ENDLINE                          token: ; 
+IDENTIFIER                       token: _aB_ 
+OP_COLON                         token: : 
+KEYWORD_INT                      token: integer 
+ENDLINE                          token: ; 
+IDENTIFIER                       token: _aB_ 
+OP_ASSIGNMENT                    token: := 
+LITERAL_INTEGER                  token: 2 
+ENDLINE                          token: ; 
 IDENTIFIER                       token: x 
 OP_ASSIGNMENT                    token: := 
 LITERAL_INTEGER                  token: 5 

@@ -1,1 +1,1 @@
-x:integer;y:double;x:=5;y:=2;y:=-3.4;x:=1.2;x=3+2;y=z-2.56;output<<"Hello World!";output<<x;if(x>=5)output<<y;x:double;"fromhereonout"'syntax''errors""below'
+x:integer;y:double;_aB_:integer;_aB_:=2;x:=5;y:=2;y:=-3.4;x:=1.2;x=3+2;y=z-2.56;output<<"Hello World!";output<<x;if(x>=5)output<<y;x:double;"fromhereonout"'syntax''errors""below'
