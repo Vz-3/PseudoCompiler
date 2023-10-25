@@ -62,10 +62,6 @@ IDENTIFIER                       token: x
 OP_COLON                         token: : 
 KEYWORD_DOUBLE                   token: double 
 ENDLINE                          token: ; 
-IDENTIFIER                       token: x 
-OP_COLON                         token: : 
-IDENTIFIER                       token: bubbly 
-ENDLINE                          token: ; 
 LITERAL_STRING                   token: "fromhereonout" 
 LITERAL_STRING                   token: 'syntax' 
 err                              token: 'errors" 

@@ -18,7 +18,6 @@ if (x>=5)
     output<<y;
 
 x:double;
-x:bubbly;
 "fromhereonout" 
 'syntax' 
 'errors"

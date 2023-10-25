@@ -127,7 +127,7 @@ class LexicalAnalyzer:
         return None
 
     def updateTokenCopy(self) -> None:
-        """ This function will update the token copy. """
+        """ This function will update the token copy. Useful for symbol table initialization and perhaps other uses."""
         self.tokensCopy = self.tokens.copy()
 
     def initDir(self) -> None:
@@ -136,7 +136,7 @@ class LexicalAnalyzer:
             os.makedirs(default_directory)
 
     def checkAtomType(self, char) -> atomType:
-        """ This function will check the type of the character."""
+        """"""
         # Rudimentary approach for type checking. Separate from the token type indentifier.
         # Produces niche error for string literals. 
         if char == "\'": # Removing the \ doesn't produce a different effect. 
@@ -415,5 +415,6 @@ class LexicalAnalyzer:
                     break
     # Once the entire file has been tokenized, then we analyze and report errors. 
     
+
     def getTokens(self) -> list:
         return self.tokens
