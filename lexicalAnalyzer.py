@@ -246,7 +246,7 @@ class LexicalAnalyzer:
         result = self.getEnumValue(typeScope, token)
         if result != None: # Guard is better than if else.
             return result
-        self.reportError(token, lineCount, f"Invalid Token Type of type {typeScope.__name__}.", "Lexical Error")
+        # self.reportError(token, lineCount, f"Invalid Token Type of type {typeScope.__name__}.", "Lexical Error")
         return False
 
     # For tokenizer only. 
