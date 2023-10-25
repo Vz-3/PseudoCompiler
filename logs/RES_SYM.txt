@@ -14,11 +14,6 @@ IDENTIFIER                       token: y
 OP_ASSIGNMENT                    token: := 
 LITERAL_INTEGER                  token: 2 
 ENDLINE                          token: ; 
-IDENTIFIER                       token: z 
-OP_ASSIGNMENT                    token: := 
-OP_ARITHMETIC_MINUS              token: - 
-LITERAL_DOUBLE                   token: 99.2 
-ENDLINE                          token: ; 
 IDENTIFIER                       token: y 
 OP_ASSIGNMENT                    token: := 
 OP_ARITHMETIC_MINUS              token: - 

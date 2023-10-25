@@ -370,6 +370,7 @@ class LexicalAnalyzer:
         self.symbol_table = {k: v for k, v in self.symbol_table.items() if v['data_type'] is not None and v['value'] != 'null'}
         # print("\nNew Symbol Table:")
         # print(self.symbol_table, end="\n\n")
+        print()
 
     def assignOrDeclare(self, l) -> None:
         token, tag, lineCount, mode = l.pop(0)

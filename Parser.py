@@ -38,19 +38,19 @@ class Parser:
             # Assignment as Declaration
             self.match('OP_ASSIGNMENT')
             self.expression()
-            # print(self.parse_tree)
-            # print(".. Assignment Statement")
+            print(self.parse_tree)
+            print(".. Assignment Statement")
 
     def assignment_statement(self):
         self.match(':=')
         self.expression()
-        # print(self.parse_tree)
+        print(self.parse_tree)
 
     def type(self):
         if self.current_token[0] in ['KEYWORD_INT', 'KEYWORD_DOUBLE', 'IDENTIFIER']:
             self.match(self.current_token[0])
-            # print(self.parse_tree)
-            # print(".. Declaration")
+            print(self.parse_tree)
+            print(".. Declaration")
         else:
             raise SyntaxError(f"Invalid type: {self.current_token[0]}")
         
@@ -89,8 +89,8 @@ class Parser:
         self.condition()
         self.match('DELIMITER_RIGHT_P')
         self.statement()
-        # print(self.parse_tree)
-        # print(".. If Statement")
+        print(self.parse_tree)
+        print(".. If Statement")
 
     def expression(self):
         self.simple_expression()
