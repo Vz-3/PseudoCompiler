@@ -136,6 +136,16 @@ class Parser:
         # Based on RES_SYM.txt
         if self.current_token[0] == 'OP_RELATIONAL_GREATERTHANOREQUAL':
             self.match('OP_RELATIONAL_GREATERTHANOREQUAL')
+        elif self.current_token[0] == 'OP_RELATIONAL_LESSTHANOREQUAL':
+            self.match('OP_RELATIONAL_LESSTHANOREQUAL')
+        elif self.current_token[0] == 'OP_RELATIONAL_GREATERTHAN':
+            self.match('OP_RELATIONAL_GREATERTHAN')
+        elif self.current_token[0] == 'OP_RELATIONAL_LESSTHAN':
+            self.match('OP_RELATIONAL_LESSTHAN')
+        elif self.current_token[0] == 'OP_RELATIONAL_EQUAL':
+            self.match('OP_RELATIONAL_EQUAL')
+        elif self.current_token[0] == 'OP_RELATIONAL_NOTEQUAL':
+            self.match('OP_RELATIONAL_NOTEQUAL')
         self.expression()
 
 # Sample usage (continued)
