@@ -10,22 +10,6 @@ IDENTIFIER                       token: x
 OP_ASSIGNMENT                    token: := 
 LITERAL_INTEGER                  token: 5 
 ENDLINE                          token: ; 
-IDENTIFIER                       token: y 
-OP_ASSIGNMENT                    token: := 
-LITERAL_DOUBLE                   token: 2.35 
-ENDLINE                          token: ; 
-IDENTIFIER                       token: y 
-OP_ASSIGNMENT                    token: := 
-LITERAL_INTEGER                  token: 3 
-OP_ARITHMETIC_PLUS               token: + 
-LITERAL_INTEGER                  token: 2 
-ENDLINE                          token: ; 
-IDENTIFIER                       token: x 
-OP_ASSIGNMENT                    token: := 
-LITERAL_INTEGER                  token: 1 
-OP_ARITHMETIC_PLUS               token: + 
-LITERAL_DOUBLE                   token: 3.25 
-ENDLINE                          token: ; 
 KEYWORD_OUTPUT                   token: output 
 OP_LEFTSHIFT                     token: << 
 LITERAL_STRING                   token: "Hello World!" 

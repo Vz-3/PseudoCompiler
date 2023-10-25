@@ -363,11 +363,11 @@ class LexicalAnalyzer:
                 self.tokens[ctr] = (self.tokens[ctr][0], 'err')
 
     def cleanTable(self) -> None:
-        rejects = {k: v for k, v in self.symbol_table.items() if v['data_type'] is None or v['value'] == 'null'}
+        rejects = {k: v for k, v in self.symbol_table.items() if v['data_type'] is None}
         for key in rejects: 
             self.fixTokens(key, rejects[key]['first_line'])
             # self.reportError(key, rejects[key]['first_line']-1, f"Incorrect token: {key}.", "Lexical Error")
-        self.symbol_table = {k: v for k, v in self.symbol_table.items() if v['data_type'] is not None and v['value'] != 'null'}
+        self.symbol_table = {k: v for k, v in self.symbol_table.items() if v['data_type'] is not None}
         # print("\nNew Symbol Table:")
         # print(self.symbol_table, end="\n\n")
         print()
