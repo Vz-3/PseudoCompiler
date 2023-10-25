@@ -4,7 +4,6 @@ class Parser:
         self.current_token = None
         self.token_index = 0
         self.parse_tree = []
-        self.lineCounter = 1  # Initialize lineCounter
 
     def consume(self):
         self.current_token = self.tokens[self.token_index]
@@ -15,20 +14,20 @@ class Parser:
             self.parse_tree.append(self.current_token)
             self.consume()
         else:
-            raise SyntaxError(f"Expected {expected_type} but got {self.current_token[0]} at line {self.lineCounter}")
+            raise SyntaxError(f"Expected {expected_type} but got {self.current_token[0]}")
 
     def program(self):
         self.declarations()
         self.statements()
         
         if self.current_token[0] != 'ENDLINE':
-            raise SyntaxError(f"Expected ENDLINE at the end, but got {self.current_token[0]} at line {self.lineCounter}")
+            raise SyntaxError(f"Expected ENDLINE at the end, but got {self.current_token[0]}")
 
     def declarations(self):
         while self.current_token[0] == 'IDENTIFIER':
             self.declaration_assignment()
             if self.current_token[0] != 'ENDLINE':
-                raise SyntaxError(f"Expected ENDLINE after declaration, but got {self.current_token[0]} at line {self.lineCounter}")
+                raise SyntaxError(f"Expected ENDLINE after declaration, but got {self.current_token[0]}")
 
     def declaration_assignment(self):
         self.match('IDENTIFIER')
@@ -54,7 +53,7 @@ class Parser:
             print(self.parse_tree)
             print(".. Declaration")
         else:
-            raise SyntaxError(f"Invalid type: {self.current_token[0]} at line {self.lineCounter}")
+            raise SyntaxError(f"Invalid type: {self.current_token[0]}")
         
 
     def statements(self):
