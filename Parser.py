@@ -104,7 +104,7 @@ class Parser:
 
     def term(self):
         self.factor()
-        while self.current_token[0] in ['OP_ARITHMETIC_MULTIPLY', 'OP_ARITHMETIC_DIVide']:
+        while self.current_token[0] in ['OP_ARITHMETIC_MULTIPLY', 'OP_ARITHMETIC_DIVIDE']:
             self.match(self.current_token[0])
             self.factor()
 
