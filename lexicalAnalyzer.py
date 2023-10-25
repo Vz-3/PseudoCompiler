@@ -127,7 +127,7 @@ class LexicalAnalyzer:
         return None
 
     def updateTokenCopy(self) -> None:
-        """ This function will update the token copy. Useful for symbol table initialization and perhaps other uses."""
+        """ This function will update the token copy. """
         self.tokensCopy = self.tokens.copy()
 
     def initDir(self) -> None:
@@ -136,6 +136,7 @@ class LexicalAnalyzer:
             os.makedirs(default_directory)
 
     def checkAtomType(self, char) -> atomType:
+        """ This function will check the type of the character."""
         # Rudimentary approach for type checking. Separate from the token type indentifier.
         # Produces niche error for string literals. 
         if char == "\'": # Removing the \ doesn't produce a different effect. 
@@ -330,9 +331,9 @@ class LexicalAnalyzer:
                 if token[0] not in self.symbol_table:
                     self.symbol_table[token[0]] = {'data_type': None, 'value': 'null', 'first_line': None, 'last_line': None}
 
-        print("\nSymbol Table:")
-        print(self.symbol_table, end="\n\n")
-        #Then we proceed by looking up all the combined atoms and check if they have an identifier or not. 
+        # print("\nSymbol Table:")
+        # print(self.symbol_table, end="\n\n")
+        # Then we proceed by looking up all the combined atoms and check if they have an identifier or not. 
         
         # Heuristic
         self.updateTokenCopy()
@@ -365,10 +366,10 @@ class LexicalAnalyzer:
         rejects = {k: v for k, v in self.symbol_table.items() if v['data_type'] is None or v['value'] == 'null'}
         for key in rejects: 
             self.fixTokens(key, rejects[key]['first_line'])
-            self.reportError(key, rejects[key]['first_line']-1, f"Incorrect token: {key}.", "Lexical Error")
+            # self.reportError(key, rejects[key]['first_line']-1, f"Incorrect token: {key}.", "Lexical Error")
         self.symbol_table = {k: v for k, v in self.symbol_table.items() if v['data_type'] is not None and v['value'] != 'null'}
-        print("\nNew Symbol Table:")
-        print(self.symbol_table, end="\n\n")
+        # print("\nNew Symbol Table:")
+        # print(self.symbol_table, end="\n\n")
 
     def assignOrDeclare(self, l) -> None:
         token, tag, lineCount, mode = l.pop(0)
@@ -414,6 +415,5 @@ class LexicalAnalyzer:
                     break
     # Once the entire file has been tokenized, then we analyze and report errors. 
     
-
     def getTokens(self) -> list:
         return self.tokens
