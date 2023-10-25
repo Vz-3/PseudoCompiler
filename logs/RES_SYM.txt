@@ -18,7 +18,6 @@ IDENTIFIER                       token: _yY_
 OP_ASSIGNMENT                    token: := 
 OP_ARITHMETIC_MINUS              token: - 
 LITERAL_DOUBLE                   token: 3.4 
-ENDLINE                          token: ; 
 IDENTIFIER                       token: x 
 OP_ASSIGNMENT                    token: := 
 LITERAL_DOUBLE                   token: 1.2 

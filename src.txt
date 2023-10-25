@@ -2,7 +2,7 @@ x:integer;
 y:double;
 
 x:=5;
-y:=2;
+y:=2
 
 y:=-3.4
 x:=1.2
