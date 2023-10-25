@@ -77,7 +77,7 @@ class tokenType(Enum):
     # Order Matters. Case sensitive for keywords. Arranged in likelihood.
     KEYWORD = '|'.join([keyword.value for keyword in KEYWORD])
 
-    IDENTIFIER = r"[a-zA-Z_][a-zA-Z0-9_]*"
+    IDENTIFIER = r"[a-zA-Z_][a-zA-Z_]*"
 
     LITERAL = '|'.join([literal.value for literal in LITERAL])
 
@@ -136,6 +136,7 @@ class LexicalAnalyzer:
             os.makedirs(default_directory)
 
     def checkAtomType(self, char) -> atomType:
+        """"""
         # Rudimentary approach for type checking. Separate from the token type indentifier.
         # Produces niche error for string literals. 
         if char == "\'": # Removing the \ doesn't produce a different effect. 
@@ -245,7 +246,7 @@ class LexicalAnalyzer:
         result = self.getEnumValue(typeScope, token)
         if result != None: # Guard is better than if else.
             return result
-        self.reportError(token, lineCount, f"Invalid Token Type of type {typeScope.__name__}.", "Lexical Error")
+        # self.reportError(token, lineCount, f"Invalid Token Type of type {typeScope.__name__}.", "Lexical Error")
         return False
 
     # For tokenizer only. 
@@ -330,9 +331,9 @@ class LexicalAnalyzer:
                 if token[0] not in self.symbol_table:
                     self.symbol_table[token[0]] = {'data_type': None, 'value': 'null', 'first_line': None, 'last_line': None}
 
-        print("\nSymbol Table:")
-        print(self.symbol_table, end="\n\n")
-        #Then we proceed by looking up all the combined atoms and check if they have an identifier or not. 
+        # print("\nSymbol Table:")
+        # print(self.symbol_table, end="\n\n")
+        # Then we proceed by looking up all the combined atoms and check if they have an identifier or not. 
         
         # Heuristic
         self.updateTokenCopy()
@@ -365,10 +366,11 @@ class LexicalAnalyzer:
         rejects = {k: v for k, v in self.symbol_table.items() if v['data_type'] is None or v['value'] == 'null'}
         for key in rejects: 
             self.fixTokens(key, rejects[key]['first_line'])
-            self.reportError(key, rejects[key]['first_line']-1, f"Incorrect token: {key}.", "Lexical Error")
+            # self.reportError(key, rejects[key]['first_line']-1, f"Incorrect token: {key}.", "Lexical Error")
         self.symbol_table = {k: v for k, v in self.symbol_table.items() if v['data_type'] is not None and v['value'] != 'null'}
-        print("\nNew Symbol Table:")
-        print(self.symbol_table, end="\n\n")
+        # print("\nNew Symbol Table:")
+        # print(self.symbol_table, end="\n\n")
+        print()
 
     def assignOrDeclare(self, l) -> None:
         token, tag, lineCount, mode = l.pop(0)

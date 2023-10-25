@@ -1,18 +1,14 @@
 x:integer;
-y:double;
+_yY_:double;
 x:=5;
-y:=2
-z:=-99.2;
-y:=-3.4
-x:=1.2
-x=3+2;
-y=z-2.56;
+_yY_:=2;
+_yY_:=-3.4;
+x:=1.2;
 output<<"Hello World!";
 output<<x;
-if(x>=5)
-output<<y;
+if(_yY_>=x)
+output<<_yY_;
 x:double;
-x:bubbly;
 "fromhereonout"
 'syntax'
 'errors"
